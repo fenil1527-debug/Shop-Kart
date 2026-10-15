@@ -25,3 +25,7 @@ lerna-debug.log*
 .idea
 .DS_Store
 Thumbs.db
+
+# Nested folder
+ShopKart-
+ShopKart-/
