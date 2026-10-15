@@ -1,6 +1,7 @@
 import express from 'express';
 import mongoose from 'mongoose';
 import dotenv from 'dotenv';
+import cors from 'cors';
 import customerRoutes from './routes/customer.routes.js';
 import productRoutes from './routes/product.routes.js';
 import wishlistRoutes from './routes/wishlist.routes.js';
@@ -14,6 +15,10 @@ dotenv.config({ path: './ShopKart--main/backend/.env' });
 
 const app = express();
 
+app.use(cors({
+    origin: process.env.FRONTEND_URL || 'http://localhost:5173',
+    credentials: true,
+}));
 app.use(express.json());
 app.use(cookieParser());
 app.use('/customers', customerRoutes);
