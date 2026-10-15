@@ -1,11 +1,7 @@
-// seed-products.mjs
-// Seeds sample products via POST /products API.
-// Usage: node seed-products.mjs   (backend must be running on port 8000)
 
 const BASE = "http://localhost:8000";
 
 const PRODUCTS = [
-  // ─── Electronics ───
   {
     name: "Noise Cancelling Headphones",
     description: "Wireless over-ear headphones with active noise cancellation, 30-hour battery life, and premium comfort cushions.",
@@ -30,7 +26,6 @@ const PRODUCTS = [
     image: "https://images.unsplash.com/photo-1527864550417-7fd91fc51a46?w=600&q=80&auto=format&fit=crop",
     stock: 40,
   },
-  // ─── Fashion ───
   {
     name: "Classic Leather Jacket",
     description: "Genuine lambskin leather jacket with quilted lining, zippered pockets, and a tailored fit.",
@@ -55,7 +50,6 @@ const PRODUCTS = [
     image: "https://images.unsplash.com/photo-1572635196237-14b3f281503f?w=600&q=80&auto=format&fit=crop",
     stock: 30,
   },
-  // ─── Home & Living ───
   {
     name: "Minimalist Desk Lamp",
     description: "LED desk lamp with adjustable brightness, color temperature control, and USB charging port.",
@@ -80,7 +74,6 @@ const PRODUCTS = [
     image: "https://images.unsplash.com/photo-1584100936595-c0654b55a2e2?w=600&q=80&auto=format&fit=crop",
     stock: 35,
   },
-  // ─── Beauty ───
   {
     name: "Vitamin C Face Serum",
     description: "Brightening face serum with 20% Vitamin C, hyaluronic acid, and niacinamide. 30ml.",

@@ -5,9 +5,12 @@ import customerRoutes from './routes/customer.routes.js';
 import productRoutes from './routes/product.routes.js';
 import wishlistRoutes from './routes/wishlist.routes.js';
 import cartRoutes from './routes/cart.routes.js';
-import  cookieParser from 'cookie-parser';
+import orderRoutes from './routes/order.routes.js';
+import cookieParser from 'cookie-parser';
 
+dotenv.config();
 dotenv.config({ path: './backend/.env' });
+dotenv.config({ path: './ShopKart--main/backend/.env' });
 
 const app = express();
 
@@ -17,6 +20,7 @@ app.use('/customers', customerRoutes);
 app.use('/products', productRoutes);
 app.use('/wishlist', wishlistRoutes);
 app.use('/cart', cartRoutes);
+app.use('/orders', orderRoutes);
 
 const port = process.env.PORT || 8000;
 const mongoUri = process.env.MONGO_URI;

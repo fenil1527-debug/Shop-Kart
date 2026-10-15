@@ -8,6 +8,8 @@ export default function CartItem({ item }) {
   const [error, setError] = useState(null);
 
   const { product, quantity } = item;
+  if (!product) return null;
+
   const lineTotal = product.price * quantity;
 
   const handleQuantity = async (newQty) => {
@@ -36,9 +38,8 @@ export default function CartItem({ item }) {
   };
 
   return (
-    <div className="bg-white rounded-2xl border border-stone-200/80 shadow-sm p-4 flex gap-4 items-start transition-all duration-200 hover:shadow-md">
-      {/* Product image */}
-      <div className="w-24 h-24 rounded-xl overflow-hidden bg-stone-100 shrink-0">
+    <div className="bg-white rounded-xl border border-[#e8e2d7] shadow-xs p-4 sm:p-5 flex gap-4 sm:gap-6 items-center transition-all duration-200 hover:border-stone-400">
+      <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-lg overflow-hidden bg-[#f4efe6] shrink-0 border border-[#e8e2d7]/60">
         <img
           src={product.image}
           alt={product.name}
@@ -46,31 +47,31 @@ export default function CartItem({ item }) {
         />
       </div>
 
-      {/* Details */}
       <div className="flex-1 min-w-0">
-        <h3 className="text-sm font-bold text-stone-900 leading-snug line-clamp-2 mb-0.5">
+        <span className="text-[10px] uppercase tracking-widest font-bold text-stone-400">
+          {product.category}
+        </span>
+        <h3 className="font-sans text-sm font-semibold text-[#191716] leading-snug line-clamp-1 mt-0.5">
           {product.name}
         </h3>
-        <p className="text-xs text-stone-400 mb-2 capitalize">{product.category}</p>
 
-        <p className="text-base font-bold text-stone-900 mb-3">
+        <p className="font-serif text-sm font-bold text-[#191716] mt-1 sm:hidden">
           ₹{product.price.toLocaleString("en-IN")}
         </p>
 
-        {/* Quantity controls */}
-        <div className="flex items-center gap-3">
-          <div className="flex items-center gap-1 bg-stone-100 rounded-xl p-0.5">
+        <div className="flex items-center gap-3 mt-3">
+          <div className="flex items-center border border-[#e8e2d7] rounded-md bg-[#fbf9f5]">
             <button
               id={`qty-dec-${product._id}`}
               onClick={() => handleQuantity(quantity - 1)}
               disabled={loadingQty || quantity <= 1}
-              className="w-8 h-8 rounded-lg flex items-center justify-center text-stone-600 hover:bg-white hover:shadow-sm transition-all duration-150 disabled:opacity-40 disabled:cursor-not-allowed font-bold text-lg"
+              className="w-7 h-7 flex items-center justify-center text-stone-600 hover:bg-stone-200 transition-colors disabled:opacity-30 disabled:cursor-not-allowed font-bold"
             >
               −
             </button>
-            <span className="w-8 text-center text-sm font-bold text-stone-800">
+            <span className="w-8 text-center text-xs font-bold text-[#191716]">
               {loadingQty ? (
-                <svg className="w-3.5 h-3.5 animate-spin mx-auto" fill="none" viewBox="0 0 24 24">
+                <svg className="w-3 h-3 animate-spin mx-auto text-stone-600" fill="none" viewBox="0 0 24 24">
                   <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                   <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
                 </svg>
@@ -80,44 +81,34 @@ export default function CartItem({ item }) {
               id={`qty-inc-${product._id}`}
               onClick={() => handleQuantity(quantity + 1)}
               disabled={loadingQty || quantity >= product.stock}
-              className="w-8 h-8 rounded-lg flex items-center justify-center text-stone-600 hover:bg-white hover:shadow-sm transition-all duration-150 disabled:opacity-40 disabled:cursor-not-allowed font-bold text-lg"
+              className="w-7 h-7 flex items-center justify-center text-stone-600 hover:bg-stone-200 transition-colors disabled:opacity-30 disabled:cursor-not-allowed font-bold"
             >
               +
             </button>
           </div>
 
           {quantity >= product.stock && (
-            <span className="text-xs text-amber-600 font-medium">Max stock</span>
+            <span className="text-[11px] text-[#c25e36] font-medium">Max atelier stock</span>
           )}
         </div>
 
         {error && (
-          <p className="text-xs text-red-500 mt-1.5">{error}</p>
+          <p className="text-[11px] text-red-500 mt-1.5">{error}</p>
         )}
       </div>
 
-      {/* Right: line total + remove */}
-      <div className="flex flex-col items-end gap-3 shrink-0">
-        <span className="text-base font-bold text-stone-900">
+      <div className="flex flex-col items-end justify-between self-stretch shrink-0">
+        <span className="font-serif text-base sm:text-lg font-bold text-[#191716]">
           ₹{lineTotal.toLocaleString("en-IN")}
         </span>
+
         <button
           id={`remove-${product._id}`}
           onClick={handleRemove}
           disabled={loadingRemove}
-          className="flex items-center gap-1 text-xs text-red-500 hover:text-red-700 font-medium transition-colors duration-200 disabled:opacity-50"
+          className="text-xs uppercase tracking-wider font-semibold text-stone-400 hover:text-rose-600 transition-colors disabled:opacity-50 flex items-center gap-1"
         >
-          {loadingRemove ? (
-            <svg className="w-3.5 h-3.5 animate-spin" fill="none" viewBox="0 0 24 24">
-              <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-              <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
-            </svg>
-          ) : (
-            <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-              <path strokeLinecap="round" strokeLinejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-            </svg>
-          )}
-          Remove
+          {loadingRemove ? "Removing..." : "Remove ✕"}
         </button>
       </div>
     </div>

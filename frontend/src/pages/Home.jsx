@@ -1,392 +1,455 @@
 import { useEffect, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import api from "../services/api";
 import Navbar from "../components/Navbar";
+import ProductCard from "../components/ProductCard";
 
-/* ─── Skeleton ─── */
 function Skeleton({ className }) {
   return <div className={`shimmer rounded-xl ${className}`} />;
 }
 
-/* ─── Category cards with real Unsplash images ─── */
-const CATEGORIES = [
+const COLLECTIONS = [
   {
-    label: "Fashion",
-    sub: "Clothing & Accessories",
-    img: "https://images.unsplash.com/photo-1483985988355-763728e1935b?w=600&q=80&auto=format&fit=crop",
-    color: "from-rose-600/70 to-rose-900/60",
+    label: "Apparel",
+    sub: "Effortless silhouettes & organic textures",
+    category: "Fashion",
+    img: "https://images.unsplash.com/photo-1483985988355-763728e1935b?w=800&q=80&auto=format&fit=crop",
   },
   {
-    label: "Electronics",
-    sub: "Gadgets & Devices",
-    img: "https://images.unsplash.com/photo-1526738549149-8e07eca6c147?w=600&q=80&auto=format&fit=crop",
-    color: "from-slate-700/70 to-slate-900/70",
+    label: "Living & Objects",
+    sub: "Ceramics, warm textiles & timeless pieces",
+    category: "Home & Living",
+    img: "https://images.unsplash.com/photo-1555041469-a586c61ea9bc?w=800&q=80&auto=format&fit=crop",
   },
   {
-    label: "Home & Living",
-    sub: "Furniture & Décor",
-    img: "https://images.unsplash.com/photo-1555041469-a586c61ea9bc?w=600&q=80&auto=format&fit=crop",
-    color: "from-amber-700/60 to-amber-900/60",
+    label: "Essential Tech",
+    sub: "Precision engineered everyday audio & gear",
+    category: "Electronics",
+    img: "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=800&q=80&auto=format&fit=crop",
   },
   {
-    label: "Beauty",
-    sub: "Skincare & Wellness",
-    img: "https://images.unsplash.com/photo-1596462502278-27bfdc403348?w=600&q=80&auto=format&fit=crop",
-    color: "from-pink-600/60 to-pink-900/60",
-  },
-];
-
-/* ─── Offer banners ─── */
-const BANNERS = [
-  {
-    label: "New Arrivals",
-    desc: "Fresh styles just dropped. Be the first to shop.",
-    img: "https://images.unsplash.com/photo-1607082348824-0a96f2a4b9da?w=900&q=80&auto=format&fit=crop",
-    badge: "NEW",
-    badgeColor: "bg-amber-500",
-    cta: "Shop Now",
-  },
-  {
-    label: "Weekend Sale",
-    desc: "Up to 50% off on selected items this weekend only.",
-    img: "https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=900&q=80&auto=format&fit=crop",
-    badge: "SALE",
-    badgeColor: "bg-red-500",
-    cta: "Grab Deals",
+    label: "Botanical Beauty",
+    sub: "Gentle formulations & clean rituals",
+    category: "Beauty",
+    img: "https://images.unsplash.com/photo-1596462502278-27bfdc403348?w=800&q=80&auto=format&fit=crop",
   },
 ];
 
-/* ─── Feature pills ─── */
-const FEATURES = [
+const ETHOS = [
   {
     icon: (
-      <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+      <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.6}>
+        <path strokeLinecap="round" strokeLinejoin="round" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+      </svg>
+    ),
+    title: "Conscious Craftsmanship",
+    desc: "Carefully selected materials built to last seasons.",
+  },
+  {
+    icon: (
+      <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.6}>
         <path strokeLinecap="round" strokeLinejoin="round" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 10V11" />
       </svg>
     ),
-    title: "Free Delivery",
-    sub: "On orders above ₹499",
+    title: "Complimentary Delivery",
+    desc: "Carbon-neutral express shipping on orders over ₹499.",
   },
   {
     icon: (
-      <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-        <path strokeLinecap="round" strokeLinejoin="round" d="M16 15v-1a4 4 0 00-4-4H8m0 0l3 3m-3-3l3-3m9 14V5a2 2 0 00-2-2H6a2 2 0 00-2 2v16l4-2 2 2 2-2 2 2 2-2 4 2z" />
+      <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.6}>
+        <path strokeLinecap="round" strokeLinejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
       </svg>
     ),
-    title: "Easy Returns",
-    sub: "7-day hassle-free return",
+    title: "7-Day Effortless Returns",
+    desc: "Seamless exchanges and guaranteed full refunds.",
   },
   {
     icon: (
-      <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-        <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+      <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.6}>
+        <path strokeLinecap="round" strokeLinejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
       </svg>
     ),
-    title: "Secure Payments",
-    sub: "100% safe & encrypted",
-  },
-  {
-    icon: (
-      <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-        <path strokeLinecap="round" strokeLinejoin="round" d="M18.364 5.636l-3.536 3.536m0 5.656l3.536 3.536M9.172 9.172L5.636 5.636m3.536 9.192l-3.536 3.536M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-5 0a4 4 0 11-8 0 4 4 0 018 0z" />
-      </svg>
-    ),
-    title: "24/7 Support",
-    sub: "We're always here for you",
+    title: "Guaranteed Security",
+    desc: "Bank-grade encrypted payments and buyer assurance.",
   },
 ];
 
 export default function Home() {
   const [user, setUser] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const navigate = useNavigate();
+  const [featuredProducts, setFeaturedProducts] = useState([]);
+  const [wishlistedIds, setWishlistedIds] = useState(new Set());
+  const [newsletterEmail, setNewsletterEmail] = useState("");
+  const [newsletterSubscribed, setNewsletterSubscribed] = useState(false);
 
   useEffect(() => {
     api.get("/customers/me")
-      .then((res) => setUser(res.data.customer))
-      .catch(() => navigate("/login"))
-      .finally(() => setLoading(false));
-  }, [navigate]);
+      .then((res) => {
+        setUser(res.data.customer);
+        return api.get("/wishlist");
+      })
+      .then((res) => {
+        if (res?.data?.wishlist) {
+          setWishlistedIds(new Set(res.data.wishlist.filter(Boolean).map((p) => typeof p === "string" ? p : p._id)));
+        }
+      })
+      .catch(() => {
+      });
 
-  const firstName = user?.fullName?.split(" ")[0] || "there";
-  const hour = new Date().getHours();
-  const greeting =
-    hour < 12 ? "Good morning" : hour < 17 ? "Good afternoon" : "Good evening";
+    api.get("/products")
+      .then((res) => {
+        if (res.data?.products) {
+          setFeaturedProducts(res.data.products.slice(0, 8));
+        }
+      })
+      .catch((err) => console.error("Error loading products:", err));
+  }, []);
+
+  const handleWishlistToggle = (productId, isWishlisted) => {
+    setWishlistedIds((prev) => {
+      const next = new Set(prev);
+      if (isWishlisted) next.add(productId);
+      else next.delete(productId);
+      return next;
+    });
+  };
+
+  const handleNewsletterSubmit = (e) => {
+    e.preventDefault();
+    if (newsletterEmail) {
+      setNewsletterSubscribed(true);
+      setNewsletterEmail("");
+    }
+  };
+
+  const firstName = user?.fullName?.split(" ")[0] || "Guest";
 
   return (
-    <div className="min-h-screen bg-[#faf9f7]">
+    <div className="min-h-screen bg-[#fbf9f5] flex flex-col text-[#191716]">
       <Navbar user={user} />
 
-      {/* ══════════════════════════════════════
-          HERO — full-width image background
-      ══════════════════════════════════════ */}
-      <section className="relative h-[520px] sm:h-[600px] overflow-hidden">
-        {/* Background image */}
-        <img
-          src="https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=1600&q=85&auto=format&fit=crop"
-          alt="ShopKart store"
-          className="absolute inset-0 w-full h-full object-cover object-center"
-        />
-        {/* Warm gradient overlay */}
-        <div className="absolute inset-0 bg-gradient-to-r from-stone-900/80 via-stone-900/50 to-transparent" />
+      <section className="relative overflow-hidden bg-[#f4efe6] border-b border-[#e8e2d7]">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 md:py-24">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
 
-        {/* Hero content */}
-        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-full flex items-center">
-          <div className="max-w-xl animate-fade-in">
-            {loading ? (
-              <div className="space-y-3">
-                <Skeleton className="h-5 w-40 bg-white/20" />
-                <Skeleton className="h-12 w-80 bg-white/20" />
-                <Skeleton className="h-5 w-64 bg-white/20" />
+            <div className="lg:col-span-7 space-y-6">
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/80 border border-[#e8e2d7] text-stone-600 text-xs font-semibold uppercase tracking-widest">
+                <span>✦</span>
+                <span>The Spring &amp; Summer Edit 2026</span>
               </div>
-            ) : (
-              <>
-                <span className="inline-block text-amber-400 text-sm font-semibold tracking-widest uppercase mb-3">
-                  {greeting}, {firstName} 👋
-                </span>
-                <h1 className="text-4xl sm:text-5xl font-bold text-white leading-tight mb-4">
-                  Discover What <br />
-                  <span className="text-amber-400">You Love</span>
-                </h1>
-                <p className="text-white/70 text-lg mb-8 leading-relaxed">
-                  Curated collections, unbeatable prices, and a shopping
-                  experience made just for you.
+
+              <h1 className="font-serif text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-[#191716] leading-[1.12]">
+                Elevated Living.<br />
+                <span className="italic font-normal text-[#c25e36]">Timeless</span> Designs.
+              </h1>
+
+              <p className="font-sans text-stone-600 text-base sm:text-lg max-w-xl leading-relaxed">
+                Welcome back{user ? `, ${firstName}` : ""}. Explore our curated selection of conscious apparel, handcrafted ceramics, and precision essentials designed for intentional living.
+              </p>
+
+              <div className="pt-2 flex flex-wrap items-center gap-4">
+                <Link
+                  to="/products"
+                  className="btn-primary px-8 py-3.5 rounded-full text-xs font-bold uppercase tracking-widest inline-flex items-center gap-2 shadow-sm"
+                >
+                  Shop New Arrivals
+                  <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                  </svg>
+                </Link>
+
+                <a
+                  href="#collections"
+                  className="px-7 py-3.5 rounded-full text-xs font-bold uppercase tracking-widest border border-stone-300 hover:border-[#191716] text-[#191716] transition-colors"
+                >
+                  Explore Collections
+                </a>
+              </div>
+
+              <div className="pt-6 grid grid-cols-3 gap-6 border-t border-[#e8e2d7]/80 max-w-md">
+                <div>
+                  <p className="font-serif text-xl sm:text-2xl font-bold text-[#191716]">100%</p>
+                  <p className="text-[11px] text-stone-500 uppercase tracking-wider">Quality Verified</p>
+                </div>
+                <div>
+                  <p className="font-serif text-xl sm:text-2xl font-bold text-[#191716]">₹499+</p>
+                  <p className="text-[11px] text-stone-500 uppercase tracking-wider">Free Delivery</p>
+                </div>
+                <div>
+                  <p className="font-serif text-xl sm:text-2xl font-bold text-[#191716]">4.9★</p>
+                  <p className="text-[11px] text-stone-500 uppercase tracking-wider">Customer Rating</p>
+                </div>
+              </div>
+            </div>
+
+            <div className="lg:col-span-5 relative">
+              <div className="relative mx-auto max-w-md aspect-4/5 rounded-2xl overflow-hidden shadow-2xl border-4 border-white">
+                <img
+                  src="https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?w=1000&q=85&auto=format&fit=crop"
+                  alt="Editorial Spring Collection"
+                  className="w-full h-full object-cover object-top hover:scale-104 transition-transform duration-700"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-stone-900/60 via-transparent to-transparent" />
+                <div className="absolute bottom-5 left-5 right-5 text-white">
+                  <span className="text-[10px] tracking-widest font-semibold uppercase bg-white/20 backdrop-blur-md px-2.5 py-1 rounded-sm">
+                    Featured Lookbook
+                  </span>
+                  <h3 className="font-serif text-xl font-bold mt-2">Organic Linen &amp; Daily Silhouettes</h3>
+                  <p className="text-xs text-white/80 mt-0.5">Understated elegance for any occasion.</p>
+                </div>
+              </div>
+
+              <div className="absolute -bottom-4 -left-4 sm:-bottom-6 sm:-left-6 bg-white/95 backdrop-blur-md p-4 rounded-xl border border-[#e8e2d7] shadow-xl max-w-[200px]">
+                <p className="font-serif text-xs font-semibold text-[#191716]">Editorial Choice</p>
+                <p className="text-[11px] text-stone-500 mt-0.5">Complimentary gift wrapping on all seasonal orders.</p>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </section>
+
+      <section className="bg-white border-b border-[#e8e2d7] py-8">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+            {ETHOS.map(({ icon, title, desc }) => (
+              <div key={title} className="flex items-start gap-3.5">
+                <div className="w-10 h-10 rounded-full bg-[#f4efe6] text-[#191716] flex items-center justify-center shrink-0">
+                  {icon}
+                </div>
+                <div>
+                  <h4 className="text-xs font-bold uppercase tracking-wider text-[#191716]">
+                    {title}
+                  </h4>
+                  <p className="text-xs text-stone-500 mt-1 leading-relaxed">
+                    {desc}
+                  </p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section id="collections" className="py-16 md:py-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex flex-col md:flex-row md:items-end justify-between mb-10 pb-4 border-b border-[#e8e2d7]">
+          <div>
+            <span className="text-xs font-bold uppercase tracking-widest text-[#c25e36]">
+              Browse by Department
+            </span>
+            <h2 className="font-serif text-3xl md:text-4xl font-bold text-[#191716] mt-1">
+              Curated Collections
+            </h2>
+          </div>
+          <Link
+            to="/products"
+            className="mt-4 md:mt-0 text-xs font-bold uppercase tracking-widest text-[#191716] hover:text-[#c25e36] inline-flex items-center gap-1 transition-colors"
+          >
+            View Complete Catalog →
+          </Link>
+        </div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          {COLLECTIONS.map(({ label, sub, category, img }) => (
+            <Link
+              key={label}
+              to={`/products?category=${encodeURIComponent(category)}`}
+              className="group relative rounded-xl overflow-hidden aspect-3/4 bg-[#f4efe6] block border border-[#e8e2d7] shadow-xs hover:shadow-lg transition-all"
+            >
+              <img
+                src={img}
+                alt={label}
+                className="w-full h-full object-cover object-center group-hover:scale-106 transition-transform duration-700"
+                loading="lazy"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-stone-900/80 via-stone-900/20 to-transparent" />
+              <div className="absolute bottom-0 inset-x-0 p-5 text-white">
+                <p className="font-serif text-xl font-bold leading-tight group-hover:translate-x-1 transition-transform">
+                  {label}
                 </p>
-              </>
-            )}
-            <div className="flex flex-wrap gap-3">
+                <p className="text-xs text-stone-200 mt-1 leading-snug">
+                  {sub}
+                </p>
+                <span className="inline-block mt-3 text-[10px] uppercase font-bold tracking-widest border-b border-white/60 pb-0.5">
+                  Explore Collection
+                </span>
+              </div>
+            </Link>
+          ))}
+        </div>
+      </section>
+
+      <section className="bg-white py-16 md:py-20 border-y border-[#e8e2d7]">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex flex-col md:flex-row md:items-end justify-between mb-10 pb-4 border-b border-[#e8e2d7]">
+            <div>
+              <span className="text-xs font-bold uppercase tracking-widest text-[#c25e36]">
+                Handpicked Selection
+              </span>
+              <h2 className="font-serif text-3xl md:text-4xl font-bold text-[#191716] mt-1">
+                New Arrivals &amp; Favorites
+              </h2>
+            </div>
+            <Link
+              to="/products"
+              className="mt-4 md:mt-0 text-xs font-bold uppercase tracking-widest text-[#191716] hover:text-[#c25e36] inline-flex items-center gap-1 transition-colors"
+            >
+              See All Items ({featuredProducts.length}+) →
+            </Link>
+          </div>
+
+          {featuredProducts.length === 0 ? (
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+              {[...Array(4)].map((_, i) => (
+                <div key={i} className="space-y-3">
+                  <Skeleton className="aspect-4/5 w-full !rounded-xl" />
+                  <Skeleton className="h-4 w-3/4" />
+                  <Skeleton className="h-3 w-1/2" />
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5 sm:gap-6">
+              {featuredProducts.map((product) => (
+                <ProductCard
+                  key={product._id}
+                  product={product}
+                  wishlisted={wishlistedIds.has(product._id)}
+                  onWishlistToggle={handleWishlistToggle}
+                />
+              ))}
+            </div>
+          )}
+        </div>
+      </section>
+
+      <section className="py-16 md:py-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="relative rounded-2xl overflow-hidden bg-[#191716] text-[#fbf9f5] min-h-[380px] flex items-center border border-[#e8e2d7]">
+          <img
+            src="https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=1600&q=80&auto=format&fit=crop"
+            alt="Atelier"
+            className="absolute inset-0 w-full h-full object-cover opacity-25"
+          />
+          <div className="relative z-10 p-8 sm:p-14 max-w-xl">
+            <span className="text-xs uppercase tracking-widest font-semibold text-[#c25e36]">
+              Atelier Notes
+            </span>
+            <h2 className="font-serif text-3xl sm:text-4xl font-bold mt-2 mb-4 leading-tight">
+              Designed with purpose.<br />Constructed for longevity.
+            </h2>
+            <p className="text-stone-300 text-sm leading-relaxed mb-8">
+              We believe in fewer, better objects. Every product in the ShopKart catalog is evaluated for architectural beauty, premium materials, and tactile comfort.
+            </p>
+            <div className="flex flex-wrap gap-4">
               <Link
                 to="/products"
-                className="btn-primary px-6 py-3 rounded-xl text-white font-semibold text-sm shadow-lg inline-flex items-center"
+                className="bg-white text-[#191716] hover:bg-[#f4efe6] px-7 py-3 rounded-full text-xs font-bold uppercase tracking-widest transition-colors"
               >
-                Shop Collections →
+                Discover The Range
               </Link>
               <Link
-                to="/profile"
-                className="px-6 py-3 rounded-xl text-white font-semibold text-sm border border-white/30 hover:bg-white/10 transition-colors duration-200"
+                to="/orders"
+                className="border border-white/40 hover:border-white text-white px-7 py-3 rounded-full text-xs font-bold uppercase tracking-widest transition-colors"
               >
-                My Account
+                Track Previous Orders
               </Link>
             </div>
           </div>
         </div>
-
-        {/* Subtle bottom fade */}
-        <div className="absolute bottom-0 left-0 right-0 h-20 bg-gradient-to-t from-[#faf9f7] to-transparent" />
       </section>
 
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-16 space-y-14 -mt-2">
-
-        {/* ══════════════════════════════════════
-            FEATURE STRIP
-        ══════════════════════════════════════ */}
-        <section>
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-            {FEATURES.map(({ icon, title, sub }) => (
-              <div
-                key={title}
-                className="bg-white rounded-2xl px-4 py-5 flex items-start gap-3 border border-stone-100 shadow-sm hover:shadow-md hover:border-amber-200 transition-all duration-200"
-              >
-                <div className="w-10 h-10 rounded-xl bg-amber-50 flex items-center justify-center text-amber-600 shrink-0">
-                  {icon}
-                </div>
-                <div>
-                  <p className="text-sm font-semibold text-stone-800">{title}</p>
-                  <p className="text-xs text-stone-400 mt-0.5 leading-snug">{sub}</p>
-                </div>
-              </div>
-            ))}
-          </div>
-        </section>
-
-        {/* ══════════════════════════════════════
-            SHOP BY CATEGORY
-        ══════════════════════════════════════ */}
-        <section>
-          <div className="flex items-end justify-between mb-6">
-            <div>
-              <h2 className="text-2xl font-bold text-stone-900">Shop by Category</h2>
-              <p className="text-stone-400 text-sm mt-1">Find exactly what you're looking for</p>
-            </div>
-            <Link to="/products" className="text-amber-600 text-sm font-semibold hover:text-amber-700 flex items-center gap-1">
-              View all
-              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
-              </svg>
-            </Link>
-          </div>
-
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-            {CATEGORIES.map(({ label, sub, img, color }) => (
-              <Link
-                key={label}
-                to={`/products?category=${encodeURIComponent(label)}`}
-                className="card-hover relative group rounded-2xl overflow-hidden aspect-[3/4] text-left block"
-              >
-                {/* Photo */}
-                <img
-                  src={img}
-                  alt={label}
-                  className="absolute inset-0 w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-500"
-                />
-                {/* Gradient overlay */}
-                <div className={`absolute inset-0 bg-gradient-to-t ${color}`} />
-                {/* Text */}
-                <div className="absolute bottom-0 left-0 right-0 p-4 z-10">
-                  <p className="text-white font-bold text-base leading-tight">{label}</p>
-                  <p className="text-white/70 text-xs mt-0.5">{sub}</p>
-                </div>
-              </Link>
-            ))}
-          </div>
-        </section>
-
-        {/* ══════════════════════════════════════
-            OFFER BANNERS (2-col)
-        ══════════════════════════════════════ */}
-        <section>
-          <div className="flex items-end justify-between mb-6">
-            <div>
-              <h2 className="text-2xl font-bold text-stone-900">Today's Highlights</h2>
-              <p className="text-stone-400 text-sm mt-1">Don't miss these handpicked deals</p>
-            </div>
-          </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
-            {BANNERS.map(({ label, desc, img, badge, badgeColor, cta }) => (
-              <div
-                key={label}
-                className="card-hover relative group rounded-2xl overflow-hidden h-56 sm:h-64 cursor-pointer"
-              >
-                <img
-                  src={img}
-                  alt={label}
-                  className="absolute inset-0 w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-500"
-                />
-                <div className="absolute inset-0 bg-gradient-to-r from-stone-900/75 to-stone-900/20" />
-                <div className="absolute inset-0 flex flex-col justify-center p-7 z-10">
-                  <span className={`inline-block self-start text-white text-xs font-bold uppercase tracking-wider px-2.5 py-1 rounded-md mb-3 ${badgeColor}`}>
-                    {badge}
-                  </span>
-                  <h3 className="text-white text-2xl font-bold leading-tight mb-2">{label}</h3>
-                  <p className="text-white/70 text-sm mb-5 leading-relaxed max-w-xs">{desc}</p>
-                  <Link to="/products" className="self-start btn-primary text-white text-sm font-semibold px-5 py-2.5 rounded-xl shadow-lg">
-                    {cta} →
-                  </Link>
-                </div>
-              </div>
-            ))}
-          </div>
-        </section>
-
-        {/* ══════════════════════════════════════
-            LIFESTYLE FULL-WIDTH BANNER
-        ══════════════════════════════════════ */}
-        <section className="relative rounded-3xl overflow-hidden h-72">
-          <img
-            src="https://images.unsplash.com/photo-1607082349566-187342175e2f?w=1400&q=85&auto=format&fit=crop"
-            alt="Lifestyle"
-            className="absolute inset-0 w-full h-full object-cover object-top"
-          />
-          <div className="absolute inset-0 bg-gradient-to-r from-amber-900/80 via-amber-800/50 to-transparent" />
-          <div className="relative z-10 h-full flex items-center px-10">
-            <div className="max-w-md">
-              <p className="text-amber-300 text-sm font-semibold uppercase tracking-widest mb-2">
-                Exclusive Members Offer
-              </p>
-              <h2 className="text-3xl font-bold text-white mb-3 leading-snug">
-                Style that fits your <span className="text-amber-300">life</span>
-              </h2>
-              <p className="text-white/65 mb-6">
-                Premium quality products curated for the modern adult lifestyle.
-              </p>
-              <Link
-                to="/profile"
-                className="inline-flex items-center gap-2 bg-white text-amber-800 font-bold text-sm px-6 py-3 rounded-xl hover:bg-amber-50 transition-colors duration-200 shadow-lg"
-              >
-                View My Account
-                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
-                </svg>
-              </Link>
-            </div>
-          </div>
-        </section>
-
-        {/* ══════════════════════════════════════
-            QUICK ACTIONS — minimal & clean
-        ══════════════════════════════════════ */}
-        <section>
-          <h2 className="text-2xl font-bold text-stone-900 mb-6">Quick Actions</h2>
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-            {[
-              {
-                to: "/profile",
-                icon: "M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z",
-                label: "My Profile",
-                sub: "View account details",
-                bg: "bg-amber-50 border-amber-100",
-                iconBg: "bg-amber-100 text-amber-700",
-              },
-              {
-                icon: "M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2",
-                label: "My Orders",
-                sub: "Track deliveries",
-                bg: "bg-blue-50 border-blue-100",
-                iconBg: "bg-blue-100 text-blue-700",
-              },
-              {
-                to: "/wishlist",
-                icon: "M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z",
-                label: "Wishlist",
-                sub: "Saved for later",
-                bg: "bg-rose-50 border-rose-100",
-                iconBg: "bg-rose-100 text-rose-600",
-              },
-            ].map(({ to, icon, label, sub, bg, iconBg }) => (
-              <Link
-                key={label}
-                to={to || "#"}
-                className={`card-hover group flex items-center gap-4 p-5 rounded-2xl border ${bg} shadow-sm hover:shadow-md transition-all duration-200`}
-              >
-                <div className={`w-12 h-12 rounded-xl flex items-center justify-center shrink-0 ${iconBg} group-hover:scale-110 transition-transform duration-200`}>
-                  <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                    <path strokeLinecap="round" strokeLinejoin="round" d={icon} />
-                  </svg>
-                </div>
-                <div>
-                  <p className="font-semibold text-stone-800 text-sm">{label}</p>
-                  <p className="text-stone-400 text-xs mt-0.5">{sub}</p>
-                </div>
-                <svg className="w-4 h-4 text-stone-300 ml-auto group-hover:text-amber-500 group-hover:translate-x-1 transition-all duration-200" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
-                </svg>
-              </Link>
-            ))}
-          </div>
-        </section>
-
-      </main>
-
-      {/* Footer */}
-      <footer className="border-t border-stone-200 bg-white mt-4">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex flex-col sm:flex-row items-center justify-between gap-3">
-          <div className="flex items-center gap-2">
-            <div className="w-7 h-7 rounded-lg flex items-center justify-center"
-              style={{ background: "linear-gradient(135deg,#d97706,#ea580c)" }}>
-              <svg className="w-4 h-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
-              </svg>
-            </div>
-            <span className="text-sm font-bold text-gradient">ShopKart</span>
-          </div>
-          <p className="text-xs text-stone-400">
-            &copy; {new Date().getFullYear()} ShopKart. All rights reserved.
+      <section className="bg-[#f4efe6] border-t border-[#e8e2d7] py-14">
+        <div className="max-w-3xl mx-auto px-4 text-center">
+          <span className="text-xs font-bold uppercase tracking-widest text-[#c25e36]">
+            The ShopKart Journal
+          </span>
+          <h2 className="font-serif text-3xl font-bold text-[#191716] mt-2 mb-3">
+            Join Our Private Circle
+          </h2>
+          <p className="text-stone-600 text-sm max-w-md mx-auto mb-6 leading-relaxed">
+            Receive exclusive seasonal previews, archival releases, and enjoy 10% privilege on your opening order.
           </p>
-          <div className="flex gap-4 text-xs text-stone-400">
-            <a href="#" className="hover:text-amber-600 transition-colors">Privacy</a>
-            <a href="#" className="hover:text-amber-600 transition-colors">Terms</a>
-            <a href="#" className="hover:text-amber-600 transition-colors">Help</a>
+
+          {newsletterSubscribed ? (
+            <div className="p-4 bg-emerald-50 border border-emerald-200 text-emerald-800 rounded-xl text-sm font-semibold max-w-md mx-auto">
+              ✓ Welcome to the ShopKart Journal. Check your inbox shortly.
+            </div>
+          ) : (
+            <form onSubmit={handleNewsletterSubmit} className="flex flex-col sm:flex-row gap-3 max-w-md mx-auto">
+              <input
+                type="email"
+                required
+                placeholder="Enter your email address"
+                value={newsletterEmail}
+                onChange={(e) => setNewsletterEmail(e.target.value)}
+                className="flex-1 px-4 py-3 rounded-full bg-white border border-[#e8e2d7] text-sm text-[#191716] placeholder-stone-400 input-focus-ring"
+              />
+              <button
+                type="submit"
+                className="btn-primary px-7 py-3 rounded-full text-xs font-bold uppercase tracking-widest shadow-sm"
+              >
+                Subscribe
+              </button>
+            </form>
+          )}
+        </div>
+      </section>
+
+      <footer className="bg-white border-t border-[#e8e2d7] mt-auto">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-8 pb-10 border-b border-[#e8e2d7]">
+            <div className="space-y-3">
+              <span className="font-serif text-2xl font-bold tracking-tight text-[#191716]">
+                ShopKart<span className="text-[#c25e36]">.</span>
+              </span>
+              <p className="text-xs text-stone-500 leading-relaxed max-w-xs">
+                A modern boutique destination celebrating minimalist aesthetics, durable materials, and thoughtful craft.
+              </p>
+            </div>
+
+            <div>
+              <h5 className="text-xs font-bold uppercase tracking-wider text-[#191716] mb-3">
+                Navigation
+              </h5>
+              <ul className="space-y-2 text-xs text-stone-600">
+                <li><Link to="/home" className="hover:text-[#191716]">Home</Link></li>
+                <li><Link to="/products" className="hover:text-[#191716]">Full Catalog</Link></li>
+                <li><Link to="/wishlist" className="hover:text-[#191716]">Wishlist</Link></li>
+                <li><Link to="/cart" className="hover:text-[#191716]">Shopping Bag</Link></li>
+              </ul>
+            </div>
+
+            <div>
+              <h5 className="text-xs font-bold uppercase tracking-wider text-[#191716] mb-3">
+                Client Care
+              </h5>
+              <ul className="space-y-2 text-xs text-stone-600">
+                <li><Link to="/orders" className="hover:text-[#191716]">Order Tracking</Link></li>
+                <li><Link to="/profile" className="hover:text-[#191716]">Account Overview</Link></li>
+                <li><span className="text-stone-400">Complimentary Shipping Policy</span></li>
+                <li><span className="text-stone-400">7-Day Effortless Returns</span></li>
+              </ul>
+            </div>
+
+            <div>
+              <h5 className="text-xs font-bold uppercase tracking-wider text-[#191716] mb-3">
+                Assurance
+              </h5>
+              <p className="text-xs text-stone-500 leading-relaxed mb-3">
+                Protected by 256-bit SSL encryption. All major payment methods and cash on delivery supported.
+              </p>
+              <div className="flex gap-2 text-stone-400 text-xs font-semibold">
+                <span>VISA</span> • <span>MASTERCARD</span> • <span>UPI</span> • <span>RAZORPAY</span>
+              </div>
+            </div>
+          </div>
+
+          <div className="pt-6 flex flex-col sm:flex-row items-center justify-between text-xs text-stone-400 gap-3">
+            <p>&copy; {new Date().getFullYear()} ShopKart Inc. Crafted with Nordic simplicity.</p>
+            <div className="flex gap-6">
+              <a href="#" className="hover:text-stone-700">Privacy Policy</a>
+              <a href="#" className="hover:text-stone-700">Terms of Service</a>
+              <a href="#" className="hover:text-stone-700">Sustainability</a>
+            </div>
           </div>
         </div>
       </footer>

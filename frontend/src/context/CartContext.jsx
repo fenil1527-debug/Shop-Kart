@@ -7,15 +7,17 @@ export function CartProvider({ children }) {
   const [cartItems, setCartItems] = useState([]);
   const [cartLoading, setCartLoading] = useState(false);
   const [cartError, setCartError] = useState(null);
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
 
-  // Derived values
   const cartCount = cartItems.reduce((sum, item) => sum + item.quantity, 0);
   const subtotal = cartItems.reduce(
-    (sum, item) => sum + item.product.price * item.quantity,
+    (sum, item) => sum + (item.product?.price || 0) * item.quantity,
     0
   );
 
-  // Fetch cart from backend
+  const openDrawer = useCallback(() => setIsDrawerOpen(true), []);
+  const closeDrawer = useCallback(() => setIsDrawerOpen(false), []);
+
   const fetchCart = useCallback(async () => {
     setCartLoading(true);
     setCartError(null);
@@ -30,27 +32,27 @@ export function CartProvider({ children }) {
     }
   }, []);
 
-  // Clear cart (on logout)
   const clearCart = useCallback(() => {
     setCartItems([]);
     setCartError(null);
+    setIsDrawerOpen(false);
   }, []);
 
-  // Add a product to cart (or increment quantity)
-  const addToCart = useCallback(async (productId) => {
+  const addToCart = useCallback(async (productId, shouldOpenDrawer = true) => {
     const res = await api.post(`/cart/${productId}`);
     setCartItems(res.data.cart || []);
+    if (shouldOpenDrawer) {
+      setIsDrawerOpen(true);
+    }
     return res.data;
   }, []);
 
-  // Update a cart item's quantity
   const updateQuantity = useCallback(async (productId, quantity) => {
     const res = await api.patch(`/cart/${productId}`, { quantity });
     setCartItems(res.data.cart || []);
     return res.data;
   }, []);
 
-  // Remove a product from cart
   const removeFromCart = useCallback(async (productId) => {
     const res = await api.delete(`/cart/${productId}`);
     setCartItems(res.data.cart || []);
@@ -65,6 +67,9 @@ export function CartProvider({ children }) {
         cartError,
         cartCount,
         subtotal,
+        isDrawerOpen,
+        openDrawer,
+        closeDrawer,
         fetchCart,
         clearCart,
         addToCart,
@@ -77,7 +82,6 @@ export function CartProvider({ children }) {
   );
 }
 
-// eslint-disable-next-line react-refresh/only-export-components
 export function useCart() {
   const ctx = useContext(CartContext);
   if (!ctx) throw new Error("useCart must be used inside <CartProvider>");

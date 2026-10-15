@@ -2,12 +2,10 @@ import mongoose from 'mongoose';
 import Customer from '../models/customer.model.js';
 import Product from '../models/product.model.js';
 
-// POST /wishlist/:productId — Add product to wishlist
 export const addToWishlist = async (req, res) => {
   try {
     const { productId } = req.params;
 
-    // Validate ObjectId format
     if (!mongoose.Types.ObjectId.isValid(productId)) {
       return res.status(400).json({
         success: false,
@@ -15,7 +13,6 @@ export const addToWishlist = async (req, res) => {
       });
     }
 
-    // Check product exists
     const product = await Product.findById(productId);
     if (!product) {
       return res.status(404).json({
@@ -24,7 +21,6 @@ export const addToWishlist = async (req, res) => {
       });
     }
 
-    // Get current user
     const customer = await Customer.findById(req.user.id);
     if (!customer) {
       return res.status(404).json({
@@ -37,7 +33,6 @@ export const addToWishlist = async (req, res) => {
       customer.wishlist = [];
     }
 
-    // Check for duplicate
     const alreadyWishlisted = customer.wishlist.some(
       (id) => id && id.toString() === productId
     );
@@ -48,7 +43,6 @@ export const addToWishlist = async (req, res) => {
       });
     }
 
-    // Add product to wishlist
     customer.wishlist.push(productId);
     await customer.save();
 
@@ -65,7 +59,6 @@ export const addToWishlist = async (req, res) => {
   }
 };
 
-// GET /wishlist — Get current user's wishlist with populated product data
 export const getWishlist = async (req, res) => {
   try {
     const customer = await Customer.findById(req.user.id).populate({
@@ -80,7 +73,6 @@ export const getWishlist = async (req, res) => {
       });
     }
 
-    // Filter out nulls in case referenced products were removed
     const validWishlist = (customer.wishlist || []).filter(Boolean);
 
     return res.status(200).json({
@@ -97,12 +89,10 @@ export const getWishlist = async (req, res) => {
   }
 };
 
-// DELETE /wishlist/:productId — Remove product from wishlist
 export const removeFromWishlist = async (req, res) => {
   try {
     const { productId } = req.params;
 
-    // Validate ObjectId format
     if (!mongoose.Types.ObjectId.isValid(productId)) {
       return res.status(400).json({
         success: false,
@@ -110,7 +100,6 @@ export const removeFromWishlist = async (req, res) => {
       });
     }
 
-    // Get current user
     const customer = await Customer.findById(req.user.id);
     if (!customer) {
       return res.status(404).json({
@@ -123,7 +112,6 @@ export const removeFromWishlist = async (req, res) => {
       customer.wishlist = [];
     }
 
-    // Check product is in wishlist
     const index = customer.wishlist.findIndex(
       (id) => id && id.toString() === productId
     );
@@ -134,7 +122,6 @@ export const removeFromWishlist = async (req, res) => {
       });
     }
 
-    // Remove product from wishlist
     customer.wishlist.splice(index, 1);
     await customer.save();
 
@@ -151,7 +138,6 @@ export const removeFromWishlist = async (req, res) => {
   }
 };
 
-// PATCH /wishlist/:productId/toggle — Toggle product in wishlist (Bonus +10 Marks)
 export const toggleWishlist = async (req, res) => {
   try {
     const { productId } = req.params;

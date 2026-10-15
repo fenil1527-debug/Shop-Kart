@@ -67,29 +67,24 @@ export default function Login() {
   return (
     <AuthBackground>
       <div className="w-full max-w-md animate-fade-in my-6">
-        {/* Header Branding */}
         <div className="text-center mb-6">
-          <Link to="/home" className="inline-flex items-center gap-2.5 mb-3 group">
-            <div
-              className="w-10 h-10 rounded-xl flex items-center justify-center shadow-md group-hover:scale-105 transition-transform duration-200"
-              style={{ background: "linear-gradient(135deg, #d97706, #ea580c)" }}
-            >
-              <svg className="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
-              </svg>
-            </div>
-            <span className="text-2xl font-bold text-gradient">ShopKart</span>
+          <Link to="/home" className="inline-flex items-center gap-2 mb-2 group">
+            <span className="font-serif text-3xl font-extrabold tracking-tight text-[#191716] group-hover:text-[#c25e36] transition-colors">
+              ShopKart<span className="text-[#c25e36]">.</span>
+            </span>
           </Link>
-          <h1 className="text-2xl sm:text-3xl font-bold text-stone-900 tracking-tight">Welcome back</h1>
-          <p className="text-stone-500 text-sm mt-1">Sign in to access your curated store and orders</p>
+          <h1 className="font-serif text-2xl sm:text-3xl font-bold text-[#191716] tracking-tight">
+            Welcome to Atelier
+          </h1>
+          <p className="text-stone-500 text-xs sm:text-sm mt-1 font-sans">
+            Sign in to access your curated selections and orders
+          </p>
         </div>
 
-        {/* Card */}
-        <div className="bg-white/95 backdrop-blur-md rounded-3xl p-7 sm:p-9 shadow-xl shadow-stone-200/50 border border-stone-200/80">
-          {/* Error banner */}
+        <div className="bg-white/95 backdrop-blur-md rounded-2xl p-7 sm:p-9 shadow-lg shadow-stone-200/40 border border-[#e8e2d7]">
           {apiError && (
-            <div className="mb-5 flex items-start gap-3 bg-red-50 border border-red-200 text-red-700 rounded-2xl p-4 text-sm animate-slide-in">
-              <svg className="w-5 h-5 shrink-0 text-red-500 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+            <div className="mb-5 flex items-start gap-3 bg-red-50 border border-red-200 text-red-700 rounded-xl p-3.5 text-xs animate-slide-in">
+              <svg className="w-4 h-4 shrink-0 text-red-500 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
                 <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
               </svg>
               <span>{apiError}</span>
@@ -108,15 +103,14 @@ export default function Login() {
               autoComplete="email"
             />
 
-            {/* Password with show/hide */}
             <div className="space-y-1.5 text-left">
               <div className="flex items-center justify-between">
-                <label className="block text-sm font-medium text-stone-700 tracking-wide">
+                <label className="block text-xs font-bold uppercase tracking-wider text-stone-600">
                   Password
                 </label>
               </div>
               <div className="relative group">
-                <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-stone-400 group-focus-within:text-amber-600 transition-colors duration-200">
+                <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-stone-400 group-focus-within:text-[#191716] transition-colors duration-200">
                   <LockIcon />
                 </div>
                 <input
@@ -125,8 +119,8 @@ export default function Login() {
                   value={formData.password}
                   onChange={set("password")}
                   autoComplete="current-password"
-                  className={`w-full bg-stone-50/70 hover:bg-stone-50 border rounded-xl py-3 pl-10 pr-11 text-stone-900 placeholder-stone-400 text-sm transition-all duration-200 input-focus-ring focus:bg-white ${
-                    errors.password ? "border-red-400 bg-red-50/30" : "border-stone-200"
+                  className={`w-full bg-[#fbf9f5] hover:bg-white border rounded-xl py-3 pl-10 pr-11 text-[#191716] placeholder-stone-400 text-sm transition-all duration-200 input-focus-ring focus:bg-white ${
+                    errors.password ? "border-red-400 bg-red-50/30" : "border-[#e8e2d7]"
                   }`}
                 />
                 <button
@@ -151,21 +145,21 @@ export default function Login() {
             <button
               type="submit"
               disabled={loading}
-              className="btn-primary w-full py-3.5 rounded-xl text-white font-semibold text-sm mt-2 flex items-center justify-center gap-2 shadow-md hover:shadow-lg transition-all"
+              className="btn-primary w-full py-3.5 rounded-full text-white font-bold text-xs uppercase tracking-widest mt-2 flex items-center justify-center gap-2 shadow-sm transition-all"
             >
               {loading ? (
                 <>
                   <svg className="animate-spin w-4 h-4 text-white" fill="none" viewBox="0 0 24 24">
-                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth={4} />
                     <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
                   </svg>
                   Signing in…
                 </>
               ) : (
                 <>
-                  Sign In
+                  Sign In to Atelier
                   <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6" />
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3" />
                   </svg>
                 </>
               )}
@@ -173,21 +167,21 @@ export default function Login() {
           </form>
 
           <div className="flex items-center gap-3 my-6">
-            <div className="flex-1 h-px bg-stone-200" />
-            <span className="text-stone-400 text-xs uppercase tracking-wider font-medium">New to ShopKart?</span>
-            <div className="flex-1 h-px bg-stone-200" />
+            <div className="flex-1 h-px bg-[#e8e2d7]" />
+            <span className="text-stone-400 text-[10px] uppercase tracking-widest font-bold">New to ShopKart?</span>
+            <div className="flex-1 h-px bg-[#e8e2d7]" />
           </div>
 
           <Link
             to="/register"
-            className="block w-full text-center py-3 rounded-xl border border-stone-200 bg-stone-50 hover:bg-stone-100 text-stone-700 text-sm font-semibold transition-all duration-200"
+            className="block w-full text-center py-3 rounded-full border border-[#e8e2d7] bg-[#fbf9f5] hover:bg-[#f4efe6] text-stone-700 text-xs uppercase tracking-widest font-bold transition-all duration-200"
           >
-            Create an account
+            Create an Account
           </Link>
         </div>
 
         <p className="text-center text-stone-400 text-xs mt-6">
-          &copy; {new Date().getFullYear()} ShopKart. Kind & thoughtful commerce.
+          &copy; {new Date().getFullYear()} ShopKart. Nordic simplicity &amp; thoughtful commerce.
         </p>
       </div>
     </AuthBackground>

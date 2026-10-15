@@ -31,7 +31,7 @@ export default function Wishlist() {
         const response = await api.get("/customers/me");
         setUser(response.data.customer);
         fetchWishlist();
-      } catch (error) {
+      } catch {
         navigate("/login");
       }
     };
@@ -50,36 +50,41 @@ export default function Wishlist() {
   };
 
   return (
-    <div className="min-h-screen bg-[#faf9f7]">
+    <div className="min-h-screen bg-[#fbf9f5] flex flex-col text-[#191716]">
       <Navbar user={user} />
-      
-      {/* Banner */}
-      <div className="bg-gradient-to-r from-rose-500 to-pink-500 py-12 md:py-16">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h1 className="text-3xl md:text-4xl font-extrabold text-white mb-4 animate-fade-in">
-            My Wishlist
+
+      <div className="bg-[#f4efe6] border-b border-[#e8e2d7] py-12 md:py-16">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <span className="text-xs uppercase tracking-widest font-bold text-[#c25e36]">
+            Personal Archive
+          </span>
+          <h1 className="font-serif text-3xl sm:text-4xl md:text-5xl font-bold text-[#191716] mt-2">
+            Your Wishlist
           </h1>
-          <p className="text-rose-100 text-lg max-w-2xl mx-auto animate-fade-in" style={{ animationDelay: '100ms' }}>
-            {wishlist.length > 0 ? `${wishlist.length} product${wishlist.length !== 1 ? "s" : ""} saved` : "Save products you love"}
+          <p className="text-stone-600 text-sm sm:text-base mt-2 font-sans">
+            {wishlist.length > 0
+              ? `${wishlist.length} curated piece${wishlist.length !== 1 ? "s" : ""} saved for later`
+              : "Save your favorite silhouettes and objects here"}
           </p>
         </div>
       </div>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 flex-1 w-full">
         {loading ? (
           <div>
-            <p className="text-stone-500 mb-6 font-medium">Loading your wishlist...</p>
-            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-5">
+            <p className="text-stone-500 mb-6 font-medium text-xs uppercase tracking-widest">
+              Consulting saved items...
+            </p>
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-5 sm:gap-6">
               {[...Array(8)].map((_, i) => (
-                <div key={i} className="bg-white rounded-2xl border border-stone-200/80 shadow-sm overflow-hidden flex flex-col h-[350px]">
-                  <div className="shimmer aspect-square bg-stone-100" />
-                  <div className="p-4 flex flex-col flex-1 gap-3">
-                    <div className="shimmer h-4 w-3/4 rounded-md bg-stone-100" />
-                    <div className="shimmer h-3 w-full rounded-md bg-stone-100" />
-                    <div className="shimmer h-3 w-5/6 rounded-md bg-stone-100" />
+                <div key={i} className="bg-white rounded-xl border border-[#e8e2d7] shadow-xs overflow-hidden flex flex-col h-[350px]">
+                  <div className="shimmer aspect-4/5 bg-stone-100" />
+                  <div className="p-4 flex flex-col flex-1 gap-2.5">
+                    <div className="shimmer h-4 w-3/4 rounded-md" />
+                    <div className="shimmer h-3 w-full rounded-md" />
                     <div className="mt-auto flex justify-between items-end">
-                      <div className="shimmer h-6 w-1/3 rounded-md bg-stone-100" />
-                      <div className="shimmer h-4 w-1/4 rounded-full bg-stone-100" />
+                      <div className="shimmer h-5 w-1/3 rounded-md" />
+                      <div className="shimmer h-4 w-1/4 rounded-full" />
                     </div>
                   </div>
                 </div>
@@ -87,31 +92,35 @@ export default function Wishlist() {
             </div>
           </div>
         ) : error ? (
-          <div className="max-w-md mx-auto text-center bg-white p-8 rounded-2xl border border-stone-200/80 shadow-sm mt-8">
-            <div className="text-4xl mb-4">⚠️</div>
-            <h2 className="text-xl font-bold text-stone-900 mb-2">Something went wrong</h2>
-            <p className="text-stone-500 mb-6">We couldn't load your wishlist.</p>
+          <div className="max-w-md mx-auto text-center bg-white p-8 rounded-2xl border border-red-200 shadow-xs mt-8">
+            <div className="text-3xl mb-3">⚠️</div>
+            <h2 className="font-serif text-xl font-bold text-[#191716] mb-2">Notice</h2>
+            <p className="text-stone-500 text-xs mb-6">We could not load your saved wishlist right now.</p>
             <button
               onClick={fetchWishlist}
-              className="btn-primary text-white text-sm font-semibold px-6 py-2.5 rounded-xl transition-all"
+              className="btn-primary text-white text-xs uppercase tracking-widest font-bold px-6 py-3 rounded-full"
             >
-              Try Again
+              Retry
             </button>
           </div>
         ) : wishlist.length === 0 ? (
-          <div className="max-w-md mx-auto text-center bg-white p-8 rounded-2xl border border-stone-200/80 shadow-sm mt-8 animate-fade-in">
-            <div className="text-4xl mb-4">❤️</div>
-            <h2 className="text-xl font-bold text-stone-900 mb-2">Your wishlist is empty</h2>
-            <p className="text-stone-500 mb-6">Save products you love and find them here later.</p>
+          <div className="max-w-md mx-auto text-center bg-white p-12 rounded-2xl border border-[#e8e2d7] shadow-xs mt-8 animate-fade-in">
+            <div className="w-16 h-16 rounded-full bg-[#f4efe6] text-stone-400 mx-auto flex items-center justify-center text-2xl mb-4">
+              ♡
+            </div>
+            <h2 className="font-serif text-2xl font-bold text-[#191716] mb-2">Your Wishlist is Empty</h2>
+            <p className="text-stone-500 text-xs leading-relaxed mb-6">
+              Click the heart on any product in our collection to save it to your private list.
+            </p>
             <Link
               to="/products"
-              className="inline-block btn-primary text-white text-sm font-semibold px-6 py-2.5 rounded-xl transition-all"
+              className="btn-primary inline-block text-white text-xs uppercase tracking-widest font-bold px-8 py-3.5 rounded-full"
             >
-              Browse Products
+              Explore Collection
             </Link>
           </div>
         ) : (
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-5 animate-fade-in">
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-5 sm:gap-6 animate-fade-in">
             {wishlist.filter(Boolean).map((product) => (
               <WishlistCard
                 key={product._id}
@@ -121,7 +130,11 @@ export default function Wishlist() {
             ))}
           </div>
         )}
-      </div>
+      </main>
+
+      <footer className="bg-white border-t border-[#e8e2d7] py-6 text-center text-xs text-stone-400 mt-auto">
+        <p>&copy; {new Date().getFullYear()} ShopKart. Nordic Minimalist Storefront.</p>
+      </footer>
     </div>
   );
 }

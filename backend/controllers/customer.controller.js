@@ -95,8 +95,15 @@ export const loginCustomer = async (req, res) => {
     res.json({
       success: true,
       message: "Login successfull ",
+      token,
+      customer: {
+        _id: customer._id,
+        fullName: customer.fullName,
+        email: customer.email,
+        phone: customer.phone,
+      },
     });
-  }catch(error){
+  } catch (error) {
         console.error("Login error:", error);
 
     return res.status(500).json({

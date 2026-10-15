@@ -1,12 +1,10 @@
 import mongoose from 'mongoose';
 import Product from '../models/product.model.js';
 
-// POST /products — Create a new product
 export const createProduct = async (req, res) => {
   try {
     const { name, description, price, category, image, stock } = req.body;
 
-    // Check required fields
     if (!name || !description || price == null || !category || !image || stock == null) {
       return res.status(400).json({
         success: false,
@@ -14,7 +12,6 @@ export const createProduct = async (req, res) => {
       });
     }
 
-    // Validate price
     if (typeof price !== 'number' || price <= 0) {
       return res.status(400).json({
         success: false,
@@ -22,7 +19,6 @@ export const createProduct = async (req, res) => {
       });
     }
 
-    // Validate stock
     if (typeof stock !== 'number' || stock < 0) {
       return res.status(400).json({
         success: false,
@@ -39,7 +35,6 @@ export const createProduct = async (req, res) => {
     });
   } catch (error) {
     console.error('Create product error:', error);
-    // Mongoose validation errors
     if (error.name === 'ValidationError') {
       const messages = Object.values(error.errors).map((e) => e.message);
       return res.status(400).json({ success: false, message: messages.join(', ') });
@@ -48,24 +43,20 @@ export const createProduct = async (req, res) => {
   }
 };
 
-// GET /products — Get all products with optional search, category filter, and sort
 export const getAllProducts = async (req, res) => {
   try {
     const { search, category, sort } = req.query;
     const query = {};
 
-    // Search: case-insensitive name match
     if (search) {
       query.name = { $regex: search, $options: 'i' };
     }
 
-    // Category filter
     if (category) {
       query.category = category;
     }
 
-    // Sort
-    let sortOption = { createdAt: -1 }; // default: newest first
+    let sortOption = { createdAt: -1 }; 
     if (sort === 'price_asc') {
       sortOption = { price: 1 };
     } else if (sort === 'price_desc') {
@@ -85,12 +76,10 @@ export const getAllProducts = async (req, res) => {
   }
 };
 
-// GET /products/:id — Get a single product by ID
 export const getProductById = async (req, res) => {
   try {
     const { id } = req.params;
 
-    // Validate ObjectId format
     if (!mongoose.Types.ObjectId.isValid(id)) {
       return res.status(400).json({
         success: false,

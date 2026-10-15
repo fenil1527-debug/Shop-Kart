@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import api from "../services/api";
 import Navbar from "../components/Navbar";
@@ -12,9 +12,9 @@ function Skeleton({ className }) {
 
 function ProductSkeleton() {
   return (
-    <div className="bg-white rounded-2xl border border-stone-200/80 shadow-sm overflow-hidden">
-      <Skeleton className="aspect-square !rounded-none" />
-      <div className="p-4 space-y-2">
+    <div className="bg-white rounded-xl border border-[#e8e2d7] shadow-xs overflow-hidden">
+      <Skeleton className="aspect-4/5 !rounded-none" />
+      <div className="p-4 space-y-2.5">
         <Skeleton className="h-4 w-3/4" />
         <Skeleton className="h-3 w-full" />
         <Skeleton className="h-3 w-1/2" />
@@ -38,10 +38,8 @@ export default function Products() {
   const [searchParams, setSearchParams] = useSearchParams();
   const { fetchCart } = useCart();
 
-  // Initialize category from URL query param if present
   const [category, setCategory] = useState(() => searchParams.get("category") || "");
 
-  // Optional auth check to display user chip in Navbar (non-blocking)
   useEffect(() => {
     api.get("/customers/me")
       .then((res) => {
@@ -51,14 +49,14 @@ export default function Products() {
       })
       .then((res) => {
         if (res?.data?.wishlist) {
-          setWishlistedIds(new Set(res.data.wishlist.map((p) => typeof p === "string" ? p : p._id)));
+          setWishlistedIds(new Set(res.data.wishlist.filter(Boolean).map((p) => typeof p === "string" ? p : p._id)));
         }
       })
       .catch(() => {
         setUser(null);
         setWishlistedIds(new Set());
       });
-  }, []);
+  }, [fetchCart]);
 
   const handleWishlistToggle = (productId, isWishlisted) => {
     setWishlistedIds((prev) => {
@@ -88,7 +86,6 @@ export default function Products() {
     return () => window.removeEventListener("wishlistUpdated", handleSync);
   }, []);
 
-  // Fetch products whenever filters change
   const fetchProducts = useCallback(async () => {
     setLoading(true);
     setError("");
@@ -111,8 +108,35 @@ export default function Products() {
   }, [search, category, sort]);
 
   useEffect(() => {
-    fetchProducts();
-  }, [fetchProducts]);
+    let ignore = false;
+    const run = async () => {
+      try {
+        const params = new URLSearchParams();
+        if (search) params.set("search", search);
+        if (category) params.set("category", category);
+        if (sort) params.set("sort", sort);
+
+        const queryString = params.toString();
+        const url = `/products${queryString ? `?${queryString}` : ""}`;
+
+        const res = await api.get(url);
+        if (!ignore) {
+          setProducts(res.data.products || []);
+          setError("");
+        }
+      } catch (err) {
+        if (!ignore) {
+          setError(err.response?.data?.message || "Failed to load products. Please try again.");
+        }
+      } finally {
+        if (!ignore) setLoading(false);
+      }
+    };
+    run();
+    return () => {
+      ignore = true;
+    };
+  }, [search, category, sort]);
 
   const handleCategoryChange = (newCat) => {
     setCategory(newCat);
@@ -122,36 +146,39 @@ export default function Products() {
   };
 
   return (
-    <div className="min-h-screen bg-[#faf9f7]">
+    <div className="min-h-screen bg-[#fbf9f5] flex flex-col text-[#191716]">
       <Navbar user={user} />
 
-      {/* Page Header */}
-      <div className="bg-gradient-to-r from-amber-600 to-orange-600 py-10 sm:py-14">
+      <div className="bg-[#f4efe6] border-b border-[#e8e2d7] py-12 md:py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h1 className="text-3xl sm:text-4xl font-bold text-white tracking-tight">
-            Our Products
-          </h1>
-          <p className="text-amber-100 text-sm sm:text-base mt-2 max-w-xl">
-            Browse our curated collection — search, filter, and find what you love.
-          </p>
+          <div className="max-w-2xl">
+            <span className="text-xs uppercase tracking-widest font-bold text-[#c25e36]">
+              {category ? `Category / ${category}` : "Curated Storefront"}
+            </span>
+            <h1 className="font-serif text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight text-[#191716] mt-2">
+              {category || "The Complete Catalog"}
+            </h1>
+            <p className="text-stone-600 text-sm sm:text-base mt-2.5 leading-relaxed font-sans">
+              Discover enduring essentials crafted with fine details and enduring materials.
+            </p>
+          </div>
         </div>
       </div>
 
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 -mt-6 pb-16 space-y-6">
-        {/* Search & Filter Bar */}
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-8 flex-1 w-full">
         <SearchBar
+          activeCategory={category}
           onSearch={(q) => setSearch(q)}
           onCategoryChange={handleCategoryChange}
           onSortChange={(s) => setSort(s)}
         />
 
-        {/* Results count */}
         {!loading && !error && (
-          <div className="flex items-center gap-2">
-            <span className="text-sm text-stone-500">
+          <div className="flex items-center justify-between text-xs text-stone-500 pb-2 border-b border-[#e8e2d7]">
+            <span>
               {products.length === 0
-                ? "No products found"
-                : `Showing ${products.length} product${products.length !== 1 ? "s" : ""}`}
+                ? "No items match your criteria"
+                : `Displaying ${products.length} curated item${products.length !== 1 ? "s" : ""}`}
             </span>
             {(search || category || sort) && (
               <button
@@ -160,66 +187,66 @@ export default function Products() {
                   handleCategoryChange("");
                   setSort("");
                 }}
-                className="text-xs text-amber-600 hover:text-amber-700 font-semibold underline underline-offset-2"
+                className="text-[#c25e36] hover:text-[#191716] font-semibold uppercase tracking-wider text-[11px]"
               >
-                Clear filters
+                Reset All Filters ✕
               </button>
             )}
           </div>
         )}
 
-        {/* ── Loading State ── */}
         {loading && (
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-5">
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-5 sm:gap-6">
             {[...Array(8)].map((_, i) => (
               <ProductSkeleton key={i} />
             ))}
           </div>
         )}
 
-        {/* ── Error State ── */}
         {!loading && error && (
-          <div className="bg-white rounded-2xl border border-red-200 p-10 text-center">
-            <div className="w-14 h-14 rounded-2xl bg-red-50 mx-auto flex items-center justify-center mb-4">
-              <svg className="w-7 h-7 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z" />
-              </svg>
+          <div className="bg-white rounded-2xl border border-red-200 p-10 text-center max-w-md mx-auto">
+            <div className="w-12 h-12 rounded-full bg-red-50 text-red-500 mx-auto flex items-center justify-center mb-4 text-xl">
+              ⚠️
             </div>
-            <h3 className="text-lg font-bold text-stone-900 mb-1">Something went wrong</h3>
-            <p className="text-stone-500 text-sm mb-5">{error}</p>
+            <h3 className="font-serif text-lg font-bold text-stone-900 mb-1">Catalog Notice</h3>
+            <p className="text-stone-500 text-xs mb-5">{error}</p>
             <button
               onClick={fetchProducts}
-              className="btn-primary text-white text-sm font-semibold px-6 py-2.5 rounded-xl"
+              className="btn-primary text-white text-xs uppercase tracking-wider font-semibold px-6 py-2.5 rounded-full"
             >
-              Try Again
+              Retry Connection
             </button>
           </div>
         )}
 
-        {/* ── Empty State ── */}
         {!loading && !error && products.length === 0 && (
-          <div className="bg-white rounded-2xl border border-stone-200/80 p-10 text-center">
-            <div className="w-14 h-14 rounded-2xl bg-amber-50 mx-auto flex items-center justify-center mb-4">
-              <svg className="w-7 h-7 text-amber-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 10V11" />
-              </svg>
+          <div className="bg-white rounded-2xl border border-[#e8e2d7] p-12 text-center max-w-md mx-auto">
+            <div className="w-16 h-16 rounded-full bg-[#f4efe6] text-stone-400 mx-auto flex items-center justify-center mb-4 text-2xl">
+              🔍
             </div>
-            <h3 className="text-lg font-bold text-stone-900 mb-1">No products found</h3>
-            <p className="text-stone-500 text-sm">
-              {search || category
-                ? "Try changing your search or filter criteria."
-                : "Products will appear here once they are added."}
+            <h3 className="font-serif text-lg font-bold text-[#191716] mb-1">No Matching Items</h3>
+            <p className="text-stone-500 text-xs leading-relaxed mb-6">
+              We couldn't find items matching your search or category selection.
             </p>
+            <button
+              onClick={() => {
+                setSearch("");
+                handleCategoryChange("");
+                setSort("");
+              }}
+              className="btn-primary text-xs uppercase tracking-widest font-bold px-6 py-3 rounded-full"
+            >
+              View All Products
+            </button>
           </div>
         )}
 
-        {/* ── Product Grid ── */}
         {!loading && !error && products.length > 0 && (
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-5">
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-5 sm:gap-6">
             {products.map((product) => (
-              <ProductCard 
-                key={product._id} 
-                product={product} 
+              <ProductCard
+                key={product._id}
+                product={product}
                 wishlisted={wishlistedIds.has(product._id)}
                 onWishlistToggle={handleWishlistToggle}
               />
@@ -227,6 +254,10 @@ export default function Products() {
           </div>
         )}
       </main>
+
+      <footer className="bg-white border-t border-[#e8e2d7] mt-16 py-8 text-center text-xs text-stone-400">
+        <p>&copy; {new Date().getFullYear()} ShopKart. Nordic Minimalist Storefront.</p>
+      </footer>
     </div>
   );
 }

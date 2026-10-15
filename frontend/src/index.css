@@ -1,127 +1,198 @@
 @import "tailwindcss";
 
 @layer base {
-  * { box-sizing: border-box; }
+  * {
+    box-sizing: border-box;
+  }
+  html {
+    scroll-behavior: smooth;
+  }
   body {
-    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
     -webkit-font-smoothing: antialiased;
-    background-color: #faf9f7;
-    color: #1c1917;
+    -moz-osx-font-smoothing: grayscale;
+    background-color: #fbf9f5;
+    color: #191716;
+  }
+  h1, h2, h3, .font-serif {
+    font-family: 'Playfair Display', Georgia, serif;
+    letter-spacing: -0.015em;
   }
 }
 
 @layer utilities {
-  /* ── Brand gradient: warm amber-orange ── */
+  /* ── Typography helpers ── */
+  .font-heading {
+    font-family: 'Playfair Display', Georgia, serif;
+  }
+  .font-body {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+  }
+
+  /* ── Nordic Color & Background Helpers ── */
+  .bg-linen {
+    background-color: #fbf9f5;
+  }
+  .bg-sand {
+    background-color: #f4efe6;
+  }
+  .bg-sand-light {
+    background-color: #f9f6f0;
+  }
+  .border-nordic {
+    border-color: #e8e2d7;
+  }
+
+  /* ── Editorial Gradient & Accents ── */
   .text-gradient {
-    background: linear-gradient(135deg, #d97706 0%, #ea580c 100%);
+    background: linear-gradient(135deg, #191716 20%, #c25e36 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
   }
 
-  /* ── Auth page glassmorphism (keeps dark look for login/register) ── */
-  .bg-glass {
-    background: rgba(255, 255, 255, 0.09);
-    backdrop-filter: blur(22px);
-    -webkit-backdrop-filter: blur(22px);
-    border: 1px solid rgba(255, 255, 255, 0.18);
+  .text-terracotta {
+    color: #c25e36;
   }
 
-  /* ── Primary button: warm amber gradient ── */
+  /* ── Glassmorphism (Warm linen frosted effect) ── */
+  .bg-glass {
+    background: rgba(251, 249, 245, 0.88);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(232, 226, 215, 0.7);
+  }
+
+  .bg-glass-card {
+    background: rgba(255, 255, 255, 0.85);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    border: 1px solid rgba(232, 226, 215, 0.85);
+  }
+
+  /* ── Primary button: Nordic Deep Charcoal ── */
   .btn-primary {
-    background: linear-gradient(135deg, #d97706 0%, #ea580c 100%);
-    transition: all 0.25s ease;
+    background-color: #191716;
+    color: #ffffff;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
   }
   .btn-primary:hover {
-    transform: translateY(-1px);
-    box-shadow: 0 10px 30px rgba(217, 119, 6, 0.40);
+    background-color: #2e2b28;
+    transform: translateY(-1.5px);
+    box-shadow: 0 10px 24px -4px rgba(25, 23, 22, 0.25);
   }
-  .btn-primary:active  { transform: translateY(0); }
+  .btn-primary:active {
+    transform: translateY(0);
+  }
   .btn-primary:disabled {
-    opacity: 0.55;
+    opacity: 0.5;
     cursor: not-allowed;
     transform: none;
     box-shadow: none;
   }
 
-  /* ── Input focus ring: warm amber ── */
-  .input-focus-ring { transition: all 0.2s ease; }
+  /* ── Secondary button: Clean Outline / Minimalist ── */
+  .btn-outline {
+    background-color: transparent;
+    color: #191716;
+    border: 1px solid #191716;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    transition: all 0.25s ease;
+  }
+  .btn-outline:hover {
+    background-color: #191716;
+    color: #ffffff;
+    transform: translateY(-1.5px);
+  }
+
+  /* ── Terracotta Accent Button ── */
+  .btn-accent {
+    background-color: #c25e36;
+    color: #ffffff;
+    font-weight: 600;
+    transition: all 0.25s ease;
+  }
+  .btn-accent:hover {
+    background-color: #ab512d;
+    transform: translateY(-1.5px);
+    box-shadow: 0 10px 24px -4px rgba(194, 94, 54, 0.35);
+  }
+
+  /* ── Input focus ring: Warm Charcoal / Sand ── */
+  .input-focus-ring {
+    transition: all 0.2s ease;
+  }
   .input-focus-ring:focus {
     outline: none;
-    box-shadow: 0 0 0 3px rgba(217, 119, 6, 0.30);
-    border-color: rgb(217, 119, 6);
+    box-shadow: 0 0 0 3px rgba(194, 94, 54, 0.18);
+    border-color: #c25e36;
   }
 
-  /* ── Card lift ── */
-  .card-hover { transition: transform 0.3s ease, box-shadow 0.3s ease; }
+  /* ── Editorial Card & Hover ── */
+  .card-hover {
+    transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.35s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.3s ease;
+  }
   .card-hover:hover {
     transform: translateY(-4px);
-    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.10);
+    box-shadow: 0 20px 40px -10px rgba(35, 30, 25, 0.08);
+    border-color: #d8d0c3;
   }
 
-  /* ── Blobs (used on auth pages) ── */
-  .blob {
-    border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%;
-    animation: morphing 8s ease-in-out infinite;
-  }
-  @keyframes morphing {
-    0%, 100% { border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%; }
-    50%       { border-radius: 30% 60% 70% 40% / 50% 60% 30% 60%; }
-  }
-
-  /* ── Float ── */
-  .animate-float { animation: float 6s ease-in-out infinite; }
-  @keyframes float {
-    0%, 100% { transform: translateY(0px); }
-    50%       { transform: translateY(-10px); }
-  }
-
-  /* ── Fade in ── */
-  .animate-fade-in { animation: fadeIn 0.55s ease forwards; }
-  @keyframes fadeIn {
-    from { opacity: 0; transform: translateY(18px); }
-    to   { opacity: 1; transform: translateY(0); }
-  }
-
-  /* ── Slide in ── */
-  .animate-slide-in { animation: slideIn 0.45s ease forwards; }
-  @keyframes slideIn {
-    from { opacity: 0; transform: translateX(-16px); }
-    to   { opacity: 1; transform: translateX(0); }
-  }
-
-  /* ── Shimmer skeleton ── */
+  /* ── Shimmer skeleton in warm sand tones ── */
   .shimmer {
-    background: linear-gradient(90deg, #f5f0e8 25%, #ede8de 50%, #f5f0e8 75%);
+    background: linear-gradient(90deg, #f4efe6 25%, #eae3d6 50%, #f4efe6 75%);
     background-size: 200% 100%;
-    animation: shimmer 1.5s infinite;
+    animation: shimmer 1.6s infinite;
   }
   @keyframes shimmer {
-    0%   { background-position: -200% 0; }
-    100% { background-position:  200% 0; }
+    0% { background-position: -200% 0; }
+    100% { background-position: 200% 0; }
   }
 
-  /* ── Pulse ring ── */
-  .pulse-ring { animation: pulseRing 2.2s cubic-bezier(0.455, 0.03, 0.515, 0.955) infinite; }
-  @keyframes pulseRing {
-    0%   { transform: scale(0.96); box-shadow: 0 0 0 0 rgba(217,119,6,0.5); }
-    70%  { transform: scale(1);    box-shadow: 0 0 0 14px rgba(217,119,6,0); }
-    100% { transform: scale(0.96); box-shadow: 0 0 0 0 rgba(217,119,6,0); }
+  /* ── Micro-animations ── */
+  .animate-fade-in {
+    animation: fadeIn 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  }
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(14px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
   }
 
-  /* ── Image overlay helpers ── */
-  .img-overlay-dark::after {
-    content: "";
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(to bottom, rgba(0,0,0,0.18) 0%, rgba(0,0,0,0.55) 100%);
-    border-radius: inherit;
+  .animate-slide-in {
+    animation: slideIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
   }
-  .img-overlay-warm::after {
-    content: "";
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(135deg, rgba(217,119,6,0.65) 0%, rgba(234,88,12,0.50) 100%);
-    border-radius: inherit;
+  @keyframes slideIn {
+    from {
+      opacity: 0;
+      transform: translateX(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
+
+  .animate-slide-up {
+    animation: slideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  }
+  @keyframes slideUp {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
   }
 }

@@ -2,7 +2,6 @@ import mongoose from 'mongoose';
 import Customer from '../models/customer.model.js';
 import Product from '../models/product.model.js';
 
-// POST /cart/:productId — Add product to cart (or increase quantity by 1)
 export const addToCart = async (req, res) => {
   try {
     const { productId } = req.params;
@@ -58,7 +57,6 @@ export const addToCart = async (req, res) => {
   }
 };
 
-// GET /cart — Get current user's cart with populated product data
 export const getCart = async (req, res) => {
   try {
     const customer = await Customer.findById(req.user.id).populate({
@@ -82,7 +80,6 @@ export const getCart = async (req, res) => {
   }
 };
 
-// PATCH /cart/:productId — Update quantity for a specific cart item
 export const updateCartQuantity = async (req, res) => {
   try {
     const { productId } = req.params;
@@ -141,7 +138,6 @@ export const updateCartQuantity = async (req, res) => {
   }
 };
 
-// DELETE /cart/:productId — Remove product from cart
 export const removeFromCart = async (req, res) => {
   try {
     const { productId } = req.params;

@@ -4,7 +4,6 @@ import api from "../services/api";
 import AuthBackground from "../components/AuthBackground";
 import InputField from "../components/InputField";
 
-/* SVG icon helpers */
 const UserIcon = () => (
   <svg className="w-4.5 h-4.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}>
     <path strokeLinecap="round" strokeLinejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
@@ -55,12 +54,12 @@ function PasswordStrength({ password }) {
           <div
             key={i}
             className={`h-1.5 flex-1 rounded-full transition-all duration-300 ${
-              i <= level ? barBg : "bg-stone-100"
+              i <= level ? barBg : "bg-stone-200"
             }`}
           />
         ))}
       </div>
-      <p className={`text-xs font-medium ${textColor}`}>{label} password</p>
+      <p className={`text-[11px] font-medium ${textColor}`}>{label} security score</p>
     </div>
   );
 }
@@ -109,39 +108,33 @@ export default function Register() {
   return (
     <AuthBackground>
       <div className="w-full max-w-md animate-fade-in my-6">
-        {/* Header Branding */}
         <div className="text-center mb-6">
-          <Link to="/home" className="inline-flex items-center gap-2.5 mb-3 group">
-            <div
-              className="w-10 h-10 rounded-xl flex items-center justify-center shadow-md group-hover:scale-105 transition-transform duration-200"
-              style={{ background: "linear-gradient(135deg, #d97706, #ea580c)" }}
-            >
-              <svg className="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
-              </svg>
-            </div>
-            <span className="text-2xl font-bold text-gradient">ShopKart</span>
+          <Link to="/home" className="inline-flex items-center gap-2 mb-2 group">
+            <span className="font-serif text-3xl font-extrabold tracking-tight text-[#191716] group-hover:text-[#c25e36] transition-colors">
+              ShopKart<span className="text-[#c25e36]">.</span>
+            </span>
           </Link>
-          <h1 className="text-2xl sm:text-3xl font-bold text-stone-900 tracking-tight">Create your account</h1>
-          <p className="text-stone-500 text-sm mt-1">Join a community of thoughtful shoppers</p>
+          <h1 className="font-serif text-2xl sm:text-3xl font-bold text-[#191716] tracking-tight">
+            Create an Account
+          </h1>
+          <p className="text-stone-500 text-xs sm:text-sm mt-1 font-sans">
+            Join the ShopKart community for thoughtful commerce
+          </p>
         </div>
 
-        {/* Card */}
-        <div className="bg-white/95 backdrop-blur-md rounded-3xl p-7 sm:p-9 shadow-xl shadow-stone-200/50 border border-stone-200/80">
-          {/* Success banner */}
+        <div className="bg-white/95 backdrop-blur-md rounded-2xl p-7 sm:p-9 shadow-lg shadow-stone-200/40 border border-[#e8e2d7]">
           {success && (
-            <div className="mb-5 flex items-center gap-3 bg-emerald-50 border border-emerald-200 text-emerald-800 rounded-2xl p-4 text-sm animate-fade-in">
-              <svg className="w-5 h-5 shrink-0 text-emerald-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+            <div className="mb-5 flex items-center gap-3 bg-emerald-50 border border-emerald-200 text-emerald-800 rounded-xl p-3.5 text-xs animate-fade-in">
+              <svg className="w-4 h-4 shrink-0 text-emerald-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
-              <span>Account created successfully! Redirecting to login…</span>
+              <span>Account created successfully! Preparing your access…</span>
             </div>
           )}
 
-          {/* Error banner */}
           {apiError && (
-            <div className="mb-5 flex items-start gap-3 bg-red-50 border border-red-200 text-red-700 rounded-2xl p-4 text-sm">
-              <svg className="w-5 h-5 shrink-0 text-red-500 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+            <div className="mb-5 flex items-start gap-3 bg-red-50 border border-red-200 text-red-700 rounded-xl p-3.5 text-xs">
+              <svg className="w-4 h-4 shrink-0 text-red-500 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
                 <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
               </svg>
               <span>{apiError}</span>
@@ -196,43 +189,41 @@ export default function Register() {
               autoComplete="tel"
             />
 
-            {/* Submit */}
             <button
               type="submit"
               disabled={loading || success}
-              className="btn-primary w-full py-3.5 rounded-xl text-white font-semibold text-sm mt-2 flex items-center justify-center gap-2 shadow-md hover:shadow-lg transition-all"
+              className="btn-primary w-full py-3.5 rounded-full text-white font-bold text-xs uppercase tracking-widest mt-2 flex items-center justify-center gap-2 shadow-sm transition-all"
             >
               {loading ? (
                 <>
                   <svg className="animate-spin w-4 h-4 text-white" fill="none" viewBox="0 0 24 24">
-                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth={4} />
                     <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
                   </svg>
                   Creating account…
                 </>
               ) : (
-                "Create Account"
+                "Complete Registration"
               )}
             </button>
           </form>
 
-          {/* Divider */}
           <div className="flex items-center gap-3 my-6">
-            <div className="flex-1 h-px bg-stone-200" />
-            <span className="text-stone-400 text-xs uppercase tracking-wider font-medium">Already have an account?</span>
-            <div className="flex-1 h-px bg-stone-200" />
+            <div className="flex-1 h-px bg-[#e8e2d7]" />
+            <span className="text-stone-400 text-[10px] uppercase tracking-widest font-bold">Already a member?</span>
+            <div className="flex-1 h-px bg-[#e8e2d7]" />
           </div>
 
           <Link
             to="/login"
-            className="block w-full text-center py-3 rounded-xl border border-stone-200 bg-stone-50 hover:bg-stone-100 text-stone-700 text-sm font-semibold transition-all duration-200"
+            className="block w-full text-center py-3 rounded-full border border-[#e8e2d7] bg-[#fbf9f5] hover:bg-[#f4efe6] text-stone-700 text-xs uppercase tracking-widest font-bold transition-all duration-200"
           >
-            Sign in instead
+            Sign in to Existing Account
           </Link>
         </div>
 
         <p className="text-center text-stone-400 text-xs mt-6">
-          &copy; {new Date().getFullYear()} ShopKart. Kind & thoughtful commerce.
+          &copy; {new Date().getFullYear()} ShopKart. Nordic simplicity &amp; thoughtful commerce.
         </p>
       </div>
     </AuthBackground>
